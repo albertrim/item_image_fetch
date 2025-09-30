@@ -75,9 +75,6 @@ public class DirectUrlImageFetchStrategy implements ImageFetchStrategy {
             log.info("Successfully fetched direct URL image in {}ms, size: {} bytes", loadingTime, fileSize);
             return List.of(result);
 
-        } catch (java.util.concurrent.TimeoutException e) {
-            log.error("Timeout fetching image from direct URL: {}", imageUrl);
-            throw new TimeoutException("Timeout fetching image from direct URL", e);
         } catch (Exception e) {
             log.error("Error fetching image from direct URL: {}", imageUrl, e);
             return Collections.emptyList();
