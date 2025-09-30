@@ -76,9 +76,9 @@ Prototype development to verify the technical feasibility of automatic image col
 ## 5. Test Scenarios
 
 ### 5.1 Scenario-based Testing
-1. **Direct Image URL Input**: Target response time < 500ms
-2. **Sales URL Crawling**: Target response time < 2000ms
-3. **Channel Search**: Target response time < 3000ms
+1. **Direct Image URL Input**: Target response time < 50ms
+2. **Sales URL Crawling**: Target response time < 200ms
+3. **Channel Search**: Target response time < 300ms
 4. **Combined Input**: Priority logic validation
 
 ### 5.2 Edge Cases

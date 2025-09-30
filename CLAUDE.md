@@ -39,7 +39,7 @@ Spring Boot test project for validating automatic item image collection function
 
 ### Performance Optimization
 - Use async processing (`CompletableFuture`) for parallel operations
-- Implement proper timeout handling (strategy-specific: 500ms/2s/3s)
+- Implement proper timeout handling (strategy-specific: 50ms/200ms/300ms)
 - Consider connection pooling for HTTP clients
 - Measure performance at method level (manual timing sufficient)
 
@@ -62,7 +62,7 @@ Spring Boot test project for validating automatic item image collection function
 - Check image formats before processing (jpg, png, gif, webp)
 
 ### External Service Integration
-- Always set timeouts for external calls (500ms/2s/3s per strategy)
+- Always set timeouts for external calls (50ms/200ms/300ms per strategy)
 - Simple retry logic (1 retry on failure, optional)
 - Handle rate limiting gracefully (basic delay)
 
@@ -133,7 +133,7 @@ Spring Boot test project for validating automatic item image collection function
 
 - Code compiles without warnings
 - Core tests pass (unit + integration)
-- Performance metrics meet requirements (500ms/2s/3s)
+- Performance metrics meet requirements (50ms/200ms/300ms)
 - Error scenarios handled gracefully
 - Basic documentation updated
 - (Optional) Peer review for complex logic

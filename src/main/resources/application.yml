@@ -15,11 +15,11 @@ webclient:
 image-fetch:
   strategy:
     direct-url:
-      timeout: 500      # ms
+      timeout: 50       # ms
     sales-url:
-      timeout: 2000     # ms
+      timeout: 200      # ms
     channel-search:
-      timeout: 3000     # ms
+      timeout: 300      # ms
   max-results: 3
   allowed-formats:
     - jpg

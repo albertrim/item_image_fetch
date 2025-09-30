@@ -5,7 +5,7 @@ Spring Boot application for automatic item image collection with multi-priority 
 ## Project Overview
 - **Goal**: Validate 3-tier priority image collection functionality
 - **Tech Stack**: Java 17, Spring Boot 3.2.x, Jsoup, WebClient
-- **Success Criteria**: 80%+ success rate, meet target response times (500ms/2s/3s)
+- **Success Criteria**: 80%+ success rate, meet target response times (50ms/200ms/300ms)
 
 ## Prerequisites
 - JDK 17

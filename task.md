@@ -8,7 +8,7 @@
 - **Goal**: Validate 3-tier priority image collection functionality
 - **Duration**: 7 days (4 tasks)
 - **Tech Stack**: Java 17, Spring Boot 3.2.x, Jsoup, WebClient
-- **Success Criteria**: 80%+ success rate, meet target response times (500ms/2s/3s)
+- **Success Criteria**: 80%+ success rate, meet target response times (50ms/200ms/300ms)
 
 ---
 
@@ -49,7 +49,7 @@ git push origin feature/task-1-setup
   - Validate image format (jpg, png, gif, webp)
   - Measure loading time
   - Extract image metadata (resolution, file size)
-  - Timeout: 500ms
+  - Timeout: 50ms
 
 #### 4. Service Layer
 - [x] `PerformanceMetricsService` - timing measurement utilities
@@ -72,7 +72,7 @@ git push origin feature/task-1-setup
 ### Validation Checklist
 - [x] API responds to direct image URL requests
 - [x] Performance metrics included in response
-- [ ] Response time < 500ms (needs runtime validation)
+- [ ] Response time < 50ms (needs runtime validation)
 - [ ] All tests pass (needs gradle test execution)
 - [ ] Code compiles without warnings (needs gradle build)
 
@@ -113,7 +113,7 @@ git push origin feature/task-2-sales-url
   - Fetch HTML from salesUrl using WebClient
   - Parse OG/Twitter meta tags
   - Select representative images
-  - Timeout: 2000ms
+  - Timeout: 200ms
   - Handle errors (invalid URL, 404, timeout)
 
 #### 4. Exception Handling
@@ -134,7 +134,7 @@ git push origin feature/task-2-sales-url
 ### Validation Checklist
 - [ ] Successfully extracts images from sales page URLs
 - [ ] OG tags and Twitter cards parsed correctly
-- [ ] Response time < 2000ms
+- [ ] Response time < 200ms
 - [ ] Error scenarios handled gracefully
 - [ ] All tests pass
 
@@ -164,7 +164,7 @@ git push origin feature/task-3-channel-search
 - [ ] `ChannelSearchImageFetchStrategy` implementation
   - Channel-specific search URL generation
   - Query building: itemName + optionName
-  - Timeout: 3000ms
+  - Timeout: 300ms
 
 #### 2. Naver Shopping Implementation (Priority)
 - [ ] Search URL: `https://search.shopping.naver.com/search/all?query=...`
@@ -191,7 +191,7 @@ git push origin feature/task-3-channel-search
 
 ### Validation Checklist
 - [ ] Channel search returns top 3 images
-- [ ] Response time < 3000ms
+- [ ] Response time < 300ms
 - [ ] At least Naver Shopping working
 - [ ] Rate limiting implemented
 - [ ] User-Agent set correctly
@@ -256,9 +256,9 @@ git push origin feature/task-4-integration
 - [ ] Verify performance metrics accuracy
 
 #### 6. Performance Validation
-- [ ] Direct URL: average < 500ms
-- [ ] Sales URL: average < 2000ms
-- [ ] Channel Search: average < 3000ms
+- [ ] Direct URL: average < 50ms
+- [ ] Sales URL: average < 200ms
+- [ ] Channel Search: average < 300ms
 - [ ] Document performance measurement results
 
 #### 7. Documentation
@@ -271,7 +271,7 @@ git push origin feature/task-4-integration
 - [ ] Priority logic executes correctly
 - [ ] Async parallel processing functional
 - [ ] All edge cases handled
-- [ ] Performance targets met (500ms/2s/3s)
+- [ ] Performance targets met (50ms/200ms/300ms)
 - [ ] Error responses formatted correctly
 - [ ] All tests pass (unit + integration)
 - [ ] Code compiles without warnings
@@ -285,9 +285,9 @@ Completed prototype with full functionality, performance metrics, and documentat
 ## Final Success Criteria (execution.md Section 16)
 - [ ] **Image Collection Success Rate**: 80%+ per priority level
 - [ ] **Target Response Times**:
-  - Direct URL: < 500ms
-  - Sales URL: < 2000ms
-  - Channel Search: < 3000ms
+  - Direct URL: < 50ms
+  - Sales URL: < 200ms
+  - Channel Search: < 300ms
 - [ ] **Channel Support**: Minimum 3 channels (Naver + 2 others)
 - [ ] **Performance Measurement**: Accurate loading time, resolution, file size
 - [ ] **Edge Case Handling**: Invalid input, timeout, crawling blocks

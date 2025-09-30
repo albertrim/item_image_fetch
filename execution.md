@@ -110,13 +110,13 @@ public interface ImageFetchStrategy {
 #### DirectUrlImageFetchStrategy
 - **Priority**: 1
 - **Logic**: Load directly if imageUrl is provided
-- **Target Response Time**: < 500ms
+- **Target Response Time**: < 50ms
 - **Validation**: Verify image format (jpg, png, gif, webp)
 
 #### SalesUrlImageFetchStrategy
 - **Priority**: 2
 - **Logic**: Parse HTML from salesUrl, extract meta tags
-- **Target Response Time**: < 2000ms
+- **Target Response Time**: < 200ms
 - **Parsing Targets**:
   - `<meta property="og:image">`
   - `<meta name="twitter:image">`
@@ -125,7 +125,7 @@ public interface ImageFetchStrategy {
 #### ChannelSearchImageFetchStrategy
 - **Priority**: 3
 - **Logic**: Execute channel-specific search query and parse results
-- **Target Response Time**: < 3000ms
+- **Target Response Time**: < 300ms
 - **Supported Channels**:
   - Naver Shopping (Priority)
   - G-Market, Coupang, 11st, Auction (Future expansion)
@@ -206,7 +206,7 @@ public record ImageFetchResponse(
 - [ ] Create basic package structure
 - [ ] Implement DTO classes (Request, Response, Result, Enums)
 - [ ] Create REST API endpoint (`/api/v1/images/fetch`)
-- [ ] Implement DirectUrlImageFetchStrategy
+- [ ] Implement DirectUrlImageFetchStrategy (timeout: 50ms)
 - [ ] Basic PerformanceMetricsService
 - [ ] Unit tests for Priority 1
 - [ ] Configuration files (application.yml)
@@ -236,7 +236,7 @@ git push origin feature/phase-1-setup
   - [ ] Parse OG tags (`og:image`)
   - [ ] Parse Twitter cards (`twitter:image`)
   - [ ] Representative image selection logic
-- [ ] Timeout handling (2 seconds)
+- [ ] Timeout handling (200ms)
 - [ ] Error handling (invalid URL, inaccessible pages)
 - [ ] Unit & integration tests
 
@@ -268,7 +268,7 @@ git push origin feature/phase-2-sales-url
   - [ ] Extract images from top 3 results
 - [ ] G-Market search implementation (if time permits)
 - [ ] Coupang search implementation (if time permits)
-- [ ] Timeout handling (3 seconds)
+- [ ] Timeout handling (300ms)
 - [ ] User-Agent configuration
 - [ ] Unit & integration tests
 
@@ -297,7 +297,7 @@ git push origin feature/phase-3-channel-search
 - [ ] Asynchronous parallel processing optimization
 - [ ] ImageCollectionService orchestration logic
 - [ ] Global exception handler
-- [ ] Performance measurement validation
+- [ ] Performance measurement validation (50ms/200ms/300ms)
 - [ ] Edge case testing
   - [ ] Invalid URL input
   - [ ] Items without images
@@ -675,7 +675,7 @@ CompletableFuture.allOf(directFuture, salesFuture, channelFuture).join();
 ```
 
 ### 10.2 Timeout Management
-- Strategy-specific timeout configuration (500ms/2s/3s)
+- Strategy-specific timeout configuration (50ms/200ms/300ms)
 - Simple timeout with fallback to next strategy
 
 ### 10.3 Connection Pool
@@ -745,7 +745,7 @@ public class GlobalExceptionHandler {
   - ✓ Valid image URL processing
   - ✓ Invalid format URL throws exception
   - ✓ Timeout throws exception
-  - ✓ Response within 500ms validation
+  - ✓ Response within 50ms validation
 
 ### 12.2 Integration Testing
 - **Targets**: Controller → Service → Strategy full flow
@@ -760,9 +760,9 @@ public class GlobalExceptionHandler {
 ### 12.3 Performance Testing
 - **Approach**: Manual testing with performance measurement
 - **Goals**:
-  - Direct URL: Average < 500ms
-  - Sales URL: Average < 2000ms
-  - Channel Search: Average < 3000ms
+  - Direct URL: Average < 50ms
+  - Sales URL: Average < 200ms
+  - Channel Search: Average < 300ms
 - **Method**: Run API calls, measure response times via logs/metrics
 
 ### 12.4 Edge Case Testing
@@ -868,9 +868,9 @@ curl -X POST http://localhost:8080/api/v1/images/fetch \
 
 - ✓ **Image Collection Success Rate**: 80%+ per priority level
 - ✓ **Target Response Time Achievement**:
-  - Direct URL: < 500ms
-  - Sales URL: < 2000ms
-  - Channel Search: < 3000ms
+  - Direct URL: < 50ms
+  - Sales URL: < 200ms
+  - Channel Search: < 300ms
 - ✓ **Channel Support**: Minimum 3 channels (Naver, G-Market, Coupang)
 - ✓ **Reliable Performance Measurement**: Accurate loading time, resolution, file size measurement
 - ✓ **Edge Case Handling**: Invalid input, timeout, crawling block countermeasures
