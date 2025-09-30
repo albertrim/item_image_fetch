@@ -19,7 +19,7 @@ image-fetch:
     sales-url:
       timeout: 200      # ms
     channel-search:
-      timeout: 300      # ms
+      timeout: 3000     # ms (increased for anti-crawling measures)
   max-results: 3
   allowed-formats:
     - jpg
@@ -27,6 +27,10 @@ image-fetch:
     - png
     - gif
     - webp
+  google-search:
+    api-key: AIzaSyAIz5mmSfuo8SF-8BVejO1gg8bu2J65sGI  # Set via environment variable or replace
+    cx: 23fcfdcfff95e4352                  # Custom Search Engine ID
+    enabled: true                                   # Enable Google Image Search fallback
 
 logging:
   level:

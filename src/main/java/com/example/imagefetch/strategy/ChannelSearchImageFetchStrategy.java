@@ -4,21 +4,12 @@ import com.example.imagefetch.dto.ImageFetchRequest;
 import com.example.imagefetch.dto.ImageResult;
 import com.example.imagefetch.dto.ImageSource;
 import com.example.imagefetch.dto.SalesChannel;
+import com.example.imagefetch.service.GoogleImageSearchService;
 import com.example.imagefetch.service.PerformanceMetricsService;
-import com.example.imagefetch.util.HtmlParser;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,11 +17,16 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class ChannelSearchImageFetchStrategy implements ImageFetchStrategy {
 
-    private final WebClient webClient;
+    private final GoogleImageSearchService googleImageSearchService;
     private final PerformanceMetricsService performanceMetricsService;
+
+    public ChannelSearchImageFetchStrategy(GoogleImageSearchService googleImageSearchService,
+                                           PerformanceMetricsService performanceMetricsService) {
+        this.googleImageSearchService = googleImageSearchService;
+        this.performanceMetricsService = performanceMetricsService;
+    }
 
     @Value("${image-fetch.strategy.channel-search.timeout:300}")
     private int timeoutMs;
@@ -38,8 +34,8 @@ public class ChannelSearchImageFetchStrategy implements ImageFetchStrategy {
     @Value("${image-fetch.max-results:3}")
     private int maxResults;
 
-    // Rate limiting: 5 requests/second = 200ms between requests
-    private static final long MIN_REQUEST_INTERVAL_MS = 200;
+    // Rate limiting: 1 request/second = 1000ms between requests (enhanced for anti-crawling)
+    private static final long MIN_REQUEST_INTERVAL_MS = 1000;
     private final AtomicLong lastRequestTime = new AtomicLong(0);
 
     @Override
@@ -63,31 +59,17 @@ public class ChannelSearchImageFetchStrategy implements ImageFetchStrategy {
 
             // Build search query
             String query = buildSearchQuery(request);
-            String searchUrl = buildSearchUrl(channel, query);
 
-            log.debug("Channel search URL: {}", searchUrl);
+            log.debug("Searching images for query: {} on channel: {}", query, channel);
 
             long startTime = System.currentTimeMillis();
 
-            // Fetch search results HTML
-            String html = webClient.get()
-                .uri(searchUrl)
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
-                .retrieve()
-                .bodyToMono(String.class)
-                .timeout(Duration.ofMillis(timeoutMs))
-                .block();
-
-            if (html == null || html.isBlank()) {
-                log.warn("Empty HTML from channel search: {}", channel);
-                return Collections.emptyList();
-            }
-
-            // Parse search results to extract image URLs
-            List<String> imageUrls = parseSearchResults(channel, html);
+            // Use Google Image Search API
+            // Add "product" keyword to improve search relevance
+            List<String> imageUrls = googleImageSearchService.searchImages(query + " product");
 
             if (imageUrls.isEmpty()) {
-                log.warn("No images found in channel search: {}", channel);
+                log.warn("No images found for query: {} on channel: {}", query, channel);
                 return Collections.emptyList();
             }
 
@@ -168,143 +150,4 @@ public class ChannelSearchImageFetchStrategy implements ImageFetchStrategy {
         return query.toString().trim();
     }
 
-    /**
-     * Build channel-specific search URL
-     */
-    private String buildSearchUrl(SalesChannel channel, String query) {
-        String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-
-        return switch (channel) {
-            case NAVER -> "https://search.shopping.naver.com/search/all?query=" + encodedQuery;
-            case GMARKET -> "https://www.gmarket.co.kr/n/search?keyword=" + encodedQuery;
-            case COUPANG -> "https://www.coupang.com/np/search?q=" + encodedQuery;
-            case ELEVENST -> "https://search.11st.co.kr/Search.tmall?kwd=" + encodedQuery;
-            case AUCTION -> "https://browse.auction.co.kr/search?keyword=" + encodedQuery;
-        };
-    }
-
-    /**
-     * Parse search results HTML to extract image URLs
-     */
-    private List<String> parseSearchResults(SalesChannel channel, String html) {
-        try {
-            Document doc = Jsoup.parse(html);
-            List<String> imageUrls = new ArrayList<>();
-
-            Elements imageElements = switch (channel) {
-                case NAVER -> extractNaverImages(doc);
-                case GMARKET -> extractGmarketImages(doc);
-                case COUPANG -> extractCoupangImages(doc);
-                case ELEVENST -> extractElevenstImages(doc);
-                case AUCTION -> extractAuctionImages(doc);
-            };
-
-            for (Element img : imageElements) {
-                String src = img.attr("data-src");
-                if (src.isBlank()) {
-                    src = img.attr("src");
-                }
-                if (src.isBlank()) {
-                    src = img.attr("data-original");
-                }
-
-                if (!src.isBlank() && isValidImageUrl(src)) {
-                    imageUrls.add(src);
-                    log.debug("Found search result image: {}", src);
-                }
-            }
-
-            log.debug("Extracted {} images from {} search results", imageUrls.size(), channel);
-            return imageUrls;
-        } catch (Exception e) {
-            log.error("Error parsing search results for channel: {}", channel, e);
-            return Collections.emptyList();
-        }
-    }
-
-    /**
-     * Extract images from Naver Shopping search results
-     */
-    private Elements extractNaverImages(Document doc) {
-        // Try multiple selectors for Naver Shopping
-        Elements images = doc.select("div.product_list_item img.thumbnail");
-        if (images.isEmpty()) {
-            images = doc.select(".img_area img");
-        }
-        if (images.isEmpty()) {
-            images = doc.select("img[data-src*='shopping.pstatic.net']");
-        }
-        if (images.isEmpty()) {
-            images = doc.select(".basicList_img_area__j0bI4 img");
-        }
-        return images;
-    }
-
-    /**
-     * Extract images from G-Market search results
-     */
-    private Elements extractGmarketImages(Document doc) {
-        Elements images = doc.select(".box__item-container img.image__item");
-        if (images.isEmpty()) {
-            images = doc.select(".thumb img");
-        }
-        return images;
-    }
-
-    /**
-     * Extract images from Coupang search results
-     */
-    private Elements extractCoupangImages(Document doc) {
-        Elements images = doc.select(".search-product-wrap img");
-        if (images.isEmpty()) {
-            images = doc.select("dt.image img");
-        }
-        return images;
-    }
-
-    /**
-     * Extract images from 11st search results
-     */
-    private Elements extractElevenstImages(Document doc) {
-        Elements images = doc.select(".c-card-item__img img");
-        if (images.isEmpty()) {
-            images = doc.select(".prd_img img");
-        }
-        return images;
-    }
-
-    /**
-     * Extract images from Auction search results
-     */
-    private Elements extractAuctionImages(Document doc) {
-        Elements images = doc.select(".item_img img");
-        if (images.isEmpty()) {
-            images = doc.select(".component-item_image img");
-        }
-        return images;
-    }
-
-    /**
-     * Validate if URL looks like a valid image URL
-     */
-    private boolean isValidImageUrl(String url) {
-        if (url == null || url.isBlank()) {
-            return false;
-        }
-
-        String lowerUrl = url.toLowerCase();
-
-        // Filter out tracking pixels and tiny images
-        if (lowerUrl.contains("1x1") || lowerUrl.contains("pixel") ||
-            lowerUrl.contains("tracking") || lowerUrl.contains("blank")) {
-            return false;
-        }
-
-        // Filter out icons and logos
-        if (lowerUrl.contains("icon") || lowerUrl.contains("logo.")) {
-            return false;
-        }
-
-        return true;
-    }
 }
