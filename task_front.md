@@ -31,59 +31,59 @@ git push origin feature/task-5-frontend-setup
 ### Implementation Tasks
 
 #### 1. Project Structure Setup
-- [ ] Create `src/main/resources/static` directory
-- [ ] Create `index.html` - main UI page
-- [ ] Create `css/style.css` - stylesheet
-- [ ] Create `js/app.js` - main application logic
-- [ ] Create `js/api.js` - API communication layer
-- [ ] Verify Spring Boot serves static files at `http://localhost:8080/`
+- [x] Create `src/main/resources/static` directory
+- [x] Create `index.html` - main UI page
+- [x] Create `css/style.css` - stylesheet
+- [x] Create `js/app.js` - main application logic
+- [x] Create `js/api.js` - API communication layer
+- [x] Verify Spring Boot serves static files at `http://localhost:8080/`
 
 #### 2. HTML Structure (Input Form)
-- [ ] Create semantic HTML5 structure
-- [ ] Add page header: "Item Image Auto-Collection Test"
-- [ ] Input field: Item Name (required, text input)
-- [ ] Input field: Option Name (optional, text input)
-- [ ] Input field: Image URL (optional, URL input)
-- [ ] Input field: Sales URL (optional, URL input)
-- [ ] Dropdown: Sales Channel (NAVER, GMARKET, COUPANG, ELEVENST, AUCTION)
-- [ ] Submit button: "🔍 Fetch Images"
-- [ ] Add accessible labels and ARIA attributes
+- [x] Create semantic HTML5 structure
+- [x] Add page header: "Item Image Auto-Collection Test"
+- [x] Input field: Item Name (required, text input)
+- [x] Input field: Option Name (optional, text input)
+- [x] Input field: Image URL (optional, URL input)
+- [x] Input field: Sales URL (optional, URL input)
+- [x] Dropdown: Sales Channel (NAVER, GMARKET, COUPANG, ELEVENST, AUCTION)
+- [x] Submit button: "🔍 Fetch Images"
+- [x] Add accessible labels and ARIA attributes
 
 #### 3. CSS Styling (Input Form)
-- [ ] Create clean, modern UI matching prd.md mockup
-- [ ] Form container with border and padding
-- [ ] Input fields with consistent styling
-- [ ] Dropdown with custom styling
-- [ ] Button with hover and active states
-- [ ] Responsive design (mobile-friendly)
-- [ ] Add loading state styles (spinner)
-- [ ] Color scheme: Professional blue/gray palette
+- [x] Create clean, modern UI matching prd.md mockup
+- [x] Form container with border and padding
+- [x] Input fields with consistent styling
+- [x] Dropdown with custom styling
+- [x] Button with hover and active states
+- [x] Responsive design (mobile-friendly)
+- [x] Add loading state styles (spinner)
+- [x] Color scheme: Professional blue/gray palette
 
 #### 4. JavaScript - Form Handling
-- [ ] Initialize form element references
-- [ ] Add form submit event listener
-- [ ] Prevent default form submission
-- [ ] Validate required field (itemName)
-- [ ] Validate URL formats (imageUrl, salesUrl)
-- [ ] Display validation error messages
-- [ ] Collect form data into request object
-- [ ] Show loading state on submit
+- [x] Initialize form element references
+- [x] Add form submit event listener
+- [x] Prevent default form submission
+- [x] Validate required field (itemName)
+- [x] Validate URL formats (imageUrl, salesUrl)
+- [x] Display validation error messages
+- [x] Collect form data into request object
+- [x] Show loading state on submit
 
 #### 5. JavaScript - API Layer (Stub)
-- [ ] Create `api.js` with `fetchImages(request)` function
-- [ ] Use Fetch API to call POST `/api/v1/images/fetch`
-- [ ] Set Content-Type header to `application/json`
-- [ ] Return Promise with response data
-- [ ] Add error handling (catch network errors)
-- [ ] Log requests to console for debugging
+- [x] Create `api.js` with `fetchImages(request)` function
+- [x] Use Fetch API to call POST `/api/v1/images/fetch`
+- [x] Set Content-Type header to `application/json`
+- [x] Return Promise with response data
+- [x] Add error handling (catch network errors)
+- [x] Log requests to console for debugging
 
 ### Validation Checklist
-- [ ] Static files served at `http://localhost:8080/`
-- [ ] Input form displays correctly
-- [ ] Form validation works (required field, URL format)
-- [ ] Submit button shows loading state
-- [ ] Console logs show form data on submit
-- [ ] Responsive design works on mobile viewport
+- [x] Static files served at `http://localhost:8080/`
+- [x] Input form displays correctly
+- [x] Form validation works (required field, URL format)
+- [x] Submit button shows loading state
+- [x] Console logs show form data on submit
+- [x] Responsive design works on mobile viewport
 
 ### Deliverable
 Functional input form UI with validation, ready for API integration

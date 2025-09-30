@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Item Image Auto-Collection Test - Verify 3-tier priority image fetching">
+    <title>Item Image Auto-Collection Test</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Item Image Auto-Collection Test</h1>
+            <p class="subtitle">3-Tier Priority Image Fetching System</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Form Section -->
+            <section class="form-section" aria-labelledby="form-title">
+                <h2 id="form-title" class="section-title">Input Form</h2>
+
+                <form id="imageForm" class="image-form" novalidate>
+                    <!-- Item Name (Required) -->
+                    <div class="form-group">
+                        <label for="itemName" class="form-label required">
+                            Item Name
+                            <span class="required-marker" aria-label="required">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="itemName"
+                            name="itemName"
+                            class="form-input"
+                            placeholder="e.g., MacBook Pro, Galaxy S24"
+                            required
+                            aria-required="true"
+                            aria-describedby="itemNameHelp"
+                        >
+                        <small id="itemNameHelp" class="form-help">Enter the item name to search for images</small>
+                        <span class="error-message" id="itemNameError" role="alert"></span>
+                    </div>
+
+                    <!-- Option Name (Optional) -->
+                    <div class="form-group">
+                        <label for="optionName" class="form-label">
+                            Option Name
+                        </label>
+                        <input
+                            type="text"
+                            id="optionName"
+                            name="optionName"
+                            class="form-input"
+                            placeholder="e.g., 16-inch, Titanium Gray"
+                            aria-describedby="optionNameHelp"
+                        >
+                        <small id="optionNameHelp" class="form-help">Optional: Color, size, or variant</small>
+                    </div>
+
+                    <!-- Image URL (Optional) - Priority 1 -->
+                    <div class="form-group">
+                        <label for="imageUrl" class="form-label">
+                            Image URL
+                            <span class="priority-badge priority-1">Priority 1</span>
+                        </label>
+                        <input
+                            type="url"
+                            id="imageUrl"
+                            name="imageUrl"
+                            class="form-input"
+                            placeholder="https://example.com/image.jpg"
+                            aria-describedby="imageUrlHelp"
+                        >
+                        <small id="imageUrlHelp" class="form-help">Direct image URL (Target: &lt; 50ms)</small>
+                        <span class="error-message" id="imageUrlError" role="alert"></span>
+                    </div>
+
+                    <!-- Sales URL (Optional) - Priority 2 -->
+                    <div class="form-group">
+                        <label for="salesUrl" class="form-label">
+                            Sales URL
+                            <span class="priority-badge priority-2">Priority 2</span>
+                        </label>
+                        <input
+                            type="url"
+                            id="salesUrl"
+                            name="salesUrl"
+                            class="form-input"
+                            placeholder="https://www.apple.com/kr/macbook-pro/"
+                            aria-describedby="salesUrlHelp"
+                        >
+                        <small id="salesUrlHelp" class="form-help">Sales page URL (Target: &lt; 200ms)</small>
+                        <span class="error-message" id="salesUrlError" role="alert"></span>
+                    </div>
+
+                    <!-- Sales Channel (Optional) - Priority 3 -->
+                    <div class="form-group">
+                        <label for="salesChannel" class="form-label">
+                            Sales Channel
+                            <span class="priority-badge priority-3">Priority 3</span>
+                        </label>
+                        <select
+                            id="salesChannel"
+                            name="salesChannel"
+                            class="form-select"
+                            aria-describedby="salesChannelHelp"
+                        >
+                            <option value="">-- Select Channel --</option>
+                            <option value="NAVER">Naver Shopping</option>
+                            <option value="GMARKET">G-Market</option>
+                            <option value="COUPANG">Coupang</option>
+                            <option value="ELEVENST">11st</option>
+                            <option value="AUCTION">Auction</option>
+                        </select>
+                        <small id="salesChannelHelp" class="form-help">Channel search (Target: &lt; 300ms)</small>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-actions">
+                        <button
+                            type="submit"
+                            id="submitBtn"
+                            class="btn btn-primary"
+                            aria-label="Fetch images"
+                        >
+                            <span class="btn-icon">🔍</span>
+                            <span class="btn-text">Fetch Images</span>
+                        </button>
+                        <button
+                            type="button"
+                            id="clearBtn"
+                            class="btn btn-secondary"
+                            aria-label="Clear form"
+                        >
+                            Clear
+                        </button>
+                        <button
+                            type="button"
+                            id="exampleBtn"
+                            class="btn btn-tertiary"
+                            aria-label="Load example data"
+                        >
+                            Load Example
+                        </button>
+                    </div>
+
+                    <!-- Loading Spinner -->
+                    <div id="loadingSpinner" class="loading-spinner" hidden>
+                        <div class="spinner"></div>
+                        <p>Fetching images...</p>
+                    </div>
+
+                    <!-- Global Error Message -->
+                    <div id="globalError" class="alert alert-error" role="alert" hidden></div>
+                </form>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" aria-labelledby="results-title" hidden>
+                <h2 id="results-title" class="section-title">Search Results</h2>
+
+                <!-- Total Loading Time -->
+                <div class="results-summary">
+                    <p class="total-time">
+                        <strong>Total Loading Time:</strong>
+                        <span id="totalLoadingTime" class="metric-value">-</span>ms
+                    </p>
+                </div>
+
+                <!-- Image Grid -->
+                <div id="imageGrid" class="image-grid">
+                    <!-- Images will be dynamically inserted here -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state">
+                    <p>No images found. Try different search parameters.</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>
+                <a href="https://github.com/albertrim/item_image_fetch" target="_blank" rel="noopener">
+                    GitHub Repository
+                </a>
+                |
+                <a href="/README.md" target="_blank">Documentation</a>
+            </p>
+            <p class="footer-note">
+                Item Image Auto-Collection - Verification Project
+            </p>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/js/api.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>
