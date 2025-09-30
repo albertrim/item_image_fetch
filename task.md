@@ -1,0 +1,317 @@
+# Item Image Fetch - Implementation Task List
+
+> For detailed specifications, refer to [execution.md](./execution.md)
+
+---
+
+## Project Overview
+- **Goal**: Validate 3-tier priority image collection functionality
+- **Duration**: 7 days (4 tasks)
+- **Tech Stack**: Java 17, Spring Boot 3.2.x, Jsoup, WebClient
+- **Success Criteria**: 80%+ success rate, meet target response times (500ms/2s/3s)
+
+---
+
+## Task 1: Project Setup + Priority 1 (Direct URL)
+**Branch**: `feature/task-1-setup`
+**Timeline**: Day 1-2
+**Reference**: execution.md Section 4.2 (Task 1), Section 5
+
+### Git Workflow
+```bash
+git checkout -b feature/task-1-setup
+# ... implement ...
+git add . && git commit -m "feat: implement project setup and priority 1 (direct URL)"
+git push origin feature/task-1-setup
+# Create PR → main
+```
+
+### Implementation Tasks
+
+#### 1. Project Setup
+- [x] Generate Spring Boot project via Spring Initializr
+  - Dependencies: web, webflux, validation, lombok
+  - Java 17, Gradle 8.x
+- [x] Create package structure: controller, service, strategy, dto, util, exception, config
+- [x] Setup `build.gradle` dependencies (execution.md Section 8)
+- [x] Create `application.yml` configuration (execution.md Section 9)
+
+#### 2. DTO Layer
+- [x] `ImageFetchRequest` record (itemName, optionName, imageUrl, salesUrl, salesChannel)
+- [x] `ImageResult` record (url, source, loadingTimeMs, resolution, fileSizeBytes)
+- [x] `ImageFetchResponse` record (totalLoadingTimeMs, images)
+- [x] `ImageSource` enum (DIRECT, SALES_URL, CHANNEL_SEARCH)
+- [x] `SalesChannel` enum (NAVER, GMARKET, COUPANG, ELEVENST, AUCTION)
+
+#### 3. Strategy Pattern Foundation
+- [x] `ImageFetchStrategy` interface (canHandle, fetchImages, getPriority)
+- [x] `DirectUrlImageFetchStrategy` implementation
+  - Validate image format (jpg, png, gif, webp)
+  - Measure loading time
+  - Extract image metadata (resolution, file size)
+  - Timeout: 500ms
+
+#### 4. Service Layer
+- [x] `PerformanceMetricsService` - timing measurement utilities
+- [x] `ImageValidator` utility - format validation, accessibility check
+
+#### 5. Controller Layer
+- [x] `ImageFetchController` with POST `/api/v1/images/fetch` endpoint
+- [x] Request validation with `@Valid`
+- [x] Return 200 OK with `ImageFetchResponse`
+
+#### 6. Configuration
+- [x] `WebClientConfig` - HTTP client setup
+- [x] Basic exception handling
+
+#### 7. Testing
+- [x] Unit tests for `DirectUrlImageFetchStrategy`
+- [x] Unit tests for `ImageValidator`
+- [x] Integration test for `/api/v1/images/fetch` with direct URL
+
+### Validation Checklist
+- [x] API responds to direct image URL requests
+- [x] Performance metrics included in response
+- [ ] Response time < 500ms (needs runtime validation)
+- [ ] All tests pass (needs gradle test execution)
+- [ ] Code compiles without warnings (needs gradle build)
+
+### Deliverable
+Working API that fetches images from direct URLs with performance metrics
+
+---
+
+## Task 2: Priority 2 (Sales URL Crawling)
+**Branch**: `feature/task-2-sales-url`
+**Timeline**: Day 3-4
+**Reference**: execution.md Section 4.2 (Task 2), Section 5
+
+### Git Workflow
+```bash
+git checkout main && git pull
+git checkout -b feature/task-2-sales-url
+# ... implement ...
+git add . && git commit -m "feat: implement priority 2 (sales URL crawling)"
+git push origin feature/task-2-sales-url
+# Create PR → main
+```
+
+### Implementation Tasks
+
+#### 1. Dependencies
+- [ ] Add Jsoup 1.17.2 to `build.gradle`
+
+#### 2. HTML Parsing Utility
+- [ ] `HtmlParser` utility class
+  - `extractOgImage(String html)` - OG tags
+  - `extractTwitterImage(String html)` - Twitter cards
+  - `extractItemImages(String html)` - generic img tags
+  - Representative image selection logic
+
+#### 3. Strategy Implementation
+- [ ] `SalesUrlImageFetchStrategy` implementation
+  - Fetch HTML from salesUrl using WebClient
+  - Parse OG/Twitter meta tags
+  - Select representative images
+  - Timeout: 2000ms
+  - Handle errors (invalid URL, 404, timeout)
+
+#### 4. Exception Handling
+- [ ] Custom exceptions: `InvalidUrlException`, `ImageNotAccessibleException`, `TimeoutException`
+- [ ] Update `ImageFetchController` error responses (400, 500, 504)
+
+#### 5. Service Integration
+- [ ] Update `ImageCollectionService` to prioritize strategies
+- [ ] Fallback logic: Priority 1 → Priority 2 → Priority 3
+
+#### 6. Testing
+- [ ] Unit tests for `HtmlParser`
+- [ ] Unit tests for `SalesUrlImageFetchStrategy`
+- [ ] Integration test with mock HTML pages
+- [ ] Test timeout scenarios
+- [ ] Test error handling (invalid URL, inaccessible pages)
+
+### Validation Checklist
+- [ ] Successfully extracts images from sales page URLs
+- [ ] OG tags and Twitter cards parsed correctly
+- [ ] Response time < 2000ms
+- [ ] Error scenarios handled gracefully
+- [ ] All tests pass
+
+### Deliverable
+Image extraction functionality from sales page URLs
+
+---
+
+## Task 3: Priority 3 (Channel Search)
+**Branch**: `feature/task-3-channel-search`
+**Timeline**: Day 5-6
+**Reference**: execution.md Section 4.2 (Task 3), Section 5, Section 13
+
+### Git Workflow
+```bash
+git checkout main && git pull
+git checkout -b feature/task-3-channel-search
+# ... implement ...
+git add . && git commit -m "feat: implement priority 3 (channel search)"
+git push origin feature/task-3-channel-search
+# Create PR → main
+```
+
+### Implementation Tasks
+
+#### 1. Strategy Implementation
+- [ ] `ChannelSearchImageFetchStrategy` implementation
+  - Channel-specific search URL generation
+  - Query building: itemName + optionName
+  - Timeout: 3000ms
+
+#### 2. Naver Shopping Implementation (Priority)
+- [ ] Search URL: `https://search.shopping.naver.com/search/all?query=...`
+- [ ] Parse search result HTML (CSS Selector: `.product_list_item img.thumbnail`)
+- [ ] Extract top 3 images from search results
+- [ ] Handle `data-src` and `src` attributes
+- [ ] Rate limiting: max 5 requests/second
+
+#### 3. Additional Channels (if time permits)
+- [ ] G-Market search implementation
+- [ ] Coupang search implementation
+- [ ] 11st search implementation (optional)
+
+#### 4. Anti-Crawling Measures
+- [ ] User-Agent header configuration
+- [ ] Basic rate limiting with delay
+- [ ] Optional: 1 retry on failure
+
+#### 5. Testing
+- [ ] Unit tests for `ChannelSearchImageFetchStrategy`
+- [ ] Test Naver Shopping search and parsing
+- [ ] Test rate limiting
+- [ ] Integration test with live/mock search results
+
+### Validation Checklist
+- [ ] Channel search returns top 3 images
+- [ ] Response time < 3000ms
+- [ ] At least Naver Shopping working
+- [ ] Rate limiting implemented
+- [ ] User-Agent set correctly
+- [ ] All tests pass
+
+### Deliverable
+Channel search-based image collection functionality (minimum 1 channel: Naver)
+
+---
+
+## Task 4: Integration & Testing
+**Branch**: `feature/task-4-integration`
+**Timeline**: Day 7
+**Reference**: execution.md Section 4.2 (Task 4), Section 5
+
+### Git Workflow
+```bash
+git checkout main && git pull
+git checkout -b feature/task-4-integration
+# ... implement ...
+git add . && git commit -m "feat: integrate all strategies and final testing"
+git push origin feature/task-4-integration
+# Create PR → main
+```
+
+### Implementation Tasks
+
+#### 1. Service Orchestration
+- [ ] `ImageCollectionService` full integration
+  - Priority logic: 1 → 2 → 3
+  - Async parallel execution with `CompletableFuture` (execution.md Section 10.1)
+  - Select top 3 images from all results
+  - Aggregate performance metrics
+
+#### 2. Global Error Handling
+- [ ] `GlobalExceptionHandler` with `@RestControllerAdvice`
+  - Handle `InvalidUrlException` → 400
+  - Handle `TimeoutException` → 504
+  - Handle generic exceptions → 500
+  - Never expose stack traces to API responses
+
+#### 3. Performance Optimization
+- [ ] WebClient connection pool configuration (execution.md Section 10.3)
+- [ ] Strategy-specific timeout configuration
+- [ ] Async processing optimization
+
+#### 4. Edge Case Testing
+- [ ] Invalid URL format
+- [ ] Items without images
+- [ ] Network timeout scenarios
+- [ ] HTML structure change (parsing failure)
+- [ ] Crawling blocked (403, 429)
+- [ ] All inputs provided (multiple strategies)
+
+#### 5. Integration Testing
+- [ ] Test full priority chain (1 → 2 → 3)
+- [ ] Test with only direct URL
+- [ ] Test with only sales URL
+- [ ] Test with only channel search
+- [ ] Test with all inputs combined
+- [ ] Verify max 3 images returned
+- [ ] Verify performance metrics accuracy
+
+#### 6. Performance Validation
+- [ ] Direct URL: average < 500ms
+- [ ] Sales URL: average < 2000ms
+- [ ] Channel Search: average < 3000ms
+- [ ] Document performance measurement results
+
+#### 7. Documentation
+- [ ] Update README.md with setup instructions
+- [ ] Document API endpoints (execution.md Section 6)
+- [ ] Add curl examples for testing
+
+### Validation Checklist
+- [ ] All 3 strategies integrated and working
+- [ ] Priority logic executes correctly
+- [ ] Async parallel processing functional
+- [ ] All edge cases handled
+- [ ] Performance targets met (500ms/2s/3s)
+- [ ] Error responses formatted correctly
+- [ ] All tests pass (unit + integration)
+- [ ] Code compiles without warnings
+- [ ] Documentation complete
+
+### Deliverable
+Completed prototype with full functionality, performance metrics, and documentation
+
+---
+
+## Final Success Criteria (execution.md Section 16)
+- [ ] **Image Collection Success Rate**: 80%+ per priority level
+- [ ] **Target Response Times**:
+  - Direct URL: < 500ms
+  - Sales URL: < 2000ms
+  - Channel Search: < 3000ms
+- [ ] **Channel Support**: Minimum 3 channels (Naver + 2 others)
+- [ ] **Performance Measurement**: Accurate loading time, resolution, file size
+- [ ] **Edge Case Handling**: Invalid input, timeout, crawling blocks
+
+---
+
+## Quick Reference Links
+
+- **Detailed Specs**: [execution.md](./execution.md)
+- **PRD**: [prd.md](./prd.md)
+- **Coding Standards**: [CLAUDE.md](./CLAUDE.md)
+
+### Key Sections in execution.md
+- Section 3: Core Component Design
+- Section 4: GitHub Workflow
+- Section 6: REST API Specification
+- Section 7: Project Structure
+- Section 8: Gradle Dependencies
+- Section 9: Configuration Files
+- Section 10: Performance Optimization
+- Section 11: Error Handling
+- Section 12: Testing Strategy
+- Section 13: Channel-Specific Details
+
+---
+
+**Note**: Each task should be completed, tested, and merged to `main` before starting the next task. Create PRs using the template in execution.md Section 4.3.
