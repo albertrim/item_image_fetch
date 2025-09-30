@@ -400,11 +400,15 @@ function createImageCard(image, index) {
     // Source badge
     const sourceBadge = createSourceBadge(image.source);
 
+    // Copy URL button
+    const copyButton = createCopyButton(image.url);
+
     // Append elements
     infoDiv.appendChild(loadingTimeMetric);
     infoDiv.appendChild(resolutionMetric);
     infoDiv.appendChild(fileSizeMetric);
     infoDiv.appendChild(sourceBadge);
+    infoDiv.appendChild(copyButton);
 
     card.appendChild(img);
     card.appendChild(infoDiv);
@@ -463,6 +467,46 @@ function createSourceBadge(source) {
     }
 
     return badge;
+}
+
+/**
+ * Create copy URL button
+ * @param {string} url - Image URL to copy
+ * @returns {HTMLElement} Copy button element
+ */
+function createCopyButton(url) {
+    const button = document.createElement('button');
+    button.className = 'copy-url-btn';
+    button.textContent = '📋 Copy URL';
+    button.setAttribute('aria-label', 'Copy image URL to clipboard');
+    button.setAttribute('title', 'Copy image URL');
+
+    button.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(url);
+
+            // Visual feedback
+            const originalText = button.textContent;
+            button.textContent = '✓ Copied!';
+            button.classList.add('copied');
+
+            // Reset after 2 seconds
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('copied');
+            }, 2000);
+
+            console.log('[App] URL copied to clipboard:', url);
+        } catch (error) {
+            console.error('[App] Failed to copy URL:', error);
+            button.textContent = '✗ Failed';
+            setTimeout(() => {
+                button.textContent = '📋 Copy URL';
+            }, 2000);
+        }
+    });
+
+    return button;
 }
 
 // ============================================
