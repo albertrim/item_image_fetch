@@ -74,6 +74,111 @@ The application will start on `http://localhost:8080`
 ./gradlew test --info
 ```
 
+## 🖥️ Frontend Test UI
+
+### Accessing the UI
+
+Once the application is running, open your browser and navigate to:
+
+```
+http://localhost:8080/
+```
+
+You will see the **Item Image Auto-Collection Test** interface.
+
+### Using the Test UI
+
+The frontend provides a user-friendly interface to test the 3-tier priority image fetching system:
+
+#### Input Form
+
+1. **Item Name** (Required)
+   - Enter the product name you want to search for
+   - Example: "MacBook Pro", "Galaxy S24"
+
+2. **Option Name** (Optional)
+   - Specify product variant, color, or size
+   - Example: "16-inch", "Titanium Gray"
+
+3. **Image URL** (Optional) - Priority 1
+   - Direct image URL for fastest fetching
+   - Target response time: < 50ms
+
+4. **Sales URL** (Optional) - Priority 2
+   - Product sales page URL
+   - System will extract images from OG tags and page content
+   - Target response time: < 200ms
+
+5. **Sales Channel** (Optional) - Priority 3
+   - Select from: Naver Shopping, G-Market, Coupang, 11st, Auction
+   - System will search the channel and extract top 3 results
+   - Target response time: < 300ms
+
+#### Features
+
+- **Load Example**: Click to populate form with test data
+- **Clear**: Reset all form fields
+- **Form Validation**: Real-time validation for required fields and URL formats
+- **Copy URL**: Each result image has a "📋 Copy URL" button to copy the image URL to clipboard
+
+#### Results Display
+
+After clicking "🔍 Fetch Images", the UI will display:
+
+- **Total Loading Time**: Overall request duration
+- **Image Grid**: Up to 3 images with detailed metrics
+  - Image thumbnail
+  - Loading time (per image)
+  - Resolution
+  - File size
+  - Source badge (color-coded by priority)
+- **Empty State**: When no images are found
+- **Error Messages**: User-friendly error notifications
+
+#### Quick Test Examples
+
+**Example 1: Test Direct URL (Priority 1)**
+```
+Item Name: Test Product
+Image URL: https://via.placeholder.com/600x400.png
+```
+
+**Example 2: Test Sales Page (Priority 2)**
+```
+Item Name: iPhone 15
+Sales URL: https://www.apple.com/kr/iphone-15/
+```
+
+**Example 3: Test Channel Search (Priority 3)**
+```
+Item Name: Galaxy S24
+Sales Channel: NAVER
+```
+
+**Example 4: Test All Priorities**
+```
+Item Name: MacBook Pro
+Option Name: 16-inch
+Image URL: https://example.com/macbook.jpg
+Sales URL: https://www.apple.com/kr/macbook-pro/
+Sales Channel: NAVER
+```
+
+### Browser Compatibility
+
+The frontend has been tested on:
+- ✅ Chrome (latest)
+- ✅ Firefox (latest)
+- ✅ Edge (latest)
+- ✅ Mobile browsers (Chrome, Safari)
+
+### Accessibility
+
+- Keyboard navigation supported (Tab, Enter)
+- ARIA labels for screen readers
+- Color contrast meets WCAG AA standards
+- Loading states with visual feedback
+
 ## 📡 API Documentation
 
 ### Endpoint
