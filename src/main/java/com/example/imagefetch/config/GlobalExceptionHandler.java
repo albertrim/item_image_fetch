@@ -1,5 +1,6 @@
 package com.example.imagefetch.config;
 
+import com.example.imagefetch.exception.ImageNotAccessibleException;
 import com.example.imagefetch.exception.InvalidUrlException;
 import com.example.imagefetch.exception.TimeoutException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,15 @@ public class GlobalExceptionHandler {
         log.error("Invalid URL error: {}", e.getMessage());
         Map<String, String> error = new HashMap<>();
         error.put("error", "INVALID_REQUEST");
+        error.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(ImageNotAccessibleException.class)
+    public ResponseEntity<Map<String, String>> handleImageNotAccessible(ImageNotAccessibleException e) {
+        log.error("Image not accessible error: {}", e.getMessage());
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "IMAGE_NOT_ACCESSIBLE");
         error.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }

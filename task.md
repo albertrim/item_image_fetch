@@ -99,17 +99,17 @@ git push origin feature/task-2-sales-url
 ### Implementation Tasks
 
 #### 1. Dependencies
-- [ ] Add Jsoup 1.17.2 to `build.gradle`
+- [x] Add Jsoup 1.17.2 to `build.gradle`
 
 #### 2. HTML Parsing Utility
-- [ ] `HtmlParser` utility class
+- [x] `HtmlParser` utility class
   - `extractOgImage(String html)` - OG tags
   - `extractTwitterImage(String html)` - Twitter cards
   - `extractItemImages(String html)` - generic img tags
   - Representative image selection logic
 
 #### 3. Strategy Implementation
-- [ ] `SalesUrlImageFetchStrategy` implementation
+- [x] `SalesUrlImageFetchStrategy` implementation
   - Fetch HTML from salesUrl using WebClient
   - Parse OG/Twitter meta tags
   - Select representative images
@@ -117,26 +117,26 @@ git push origin feature/task-2-sales-url
   - Handle errors (invalid URL, 404, timeout)
 
 #### 4. Exception Handling
-- [ ] Custom exceptions: `InvalidUrlException`, `ImageNotAccessibleException`, `TimeoutException`
-- [ ] Update `ImageFetchController` error responses (400, 500, 504)
+- [x] Custom exceptions: `InvalidUrlException`, `ImageNotAccessibleException`, `TimeoutException`
+- [x] Update `ImageFetchController` error responses (400, 500, 504)
 
 #### 5. Service Integration
-- [ ] Update `ImageCollectionService` to prioritize strategies
-- [ ] Fallback logic: Priority 1 → Priority 2 → Priority 3
+- [x] Update `ImageCollectionService` to prioritize strategies
+- [x] Fallback logic: Priority 1 → Priority 2 → Priority 3
 
 #### 6. Testing
-- [ ] Unit tests for `HtmlParser`
-- [ ] Unit tests for `SalesUrlImageFetchStrategy`
-- [ ] Integration test with mock HTML pages
-- [ ] Test timeout scenarios
-- [ ] Test error handling (invalid URL, inaccessible pages)
+- [x] Unit tests for `HtmlParser`
+- [x] Unit tests for `SalesUrlImageFetchStrategy`
+- [x] Integration test with mock HTML pages
+- [x] Test timeout scenarios
+- [x] Test error handling (invalid URL, inaccessible pages)
 
 ### Validation Checklist
-- [ ] Successfully extracts images from sales page URLs
-- [ ] OG tags and Twitter cards parsed correctly
-- [ ] Response time < 200ms
-- [ ] Error scenarios handled gracefully
-- [ ] All tests pass
+- [x] Successfully extracts images from sales page URLs
+- [x] OG tags and Twitter cards parsed correctly
+- [x] Response time < 200ms
+- [x] Error scenarios handled gracefully
+- [x] All tests pass
 
 ### Deliverable
 Image extraction functionality from sales page URLs
