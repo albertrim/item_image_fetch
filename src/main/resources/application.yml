@@ -28,9 +28,9 @@ image-fetch:
     - gif
     - webp
   google-search:
-    api-key: AIzaSyAIz5mmSfuo8SF-8BVejO1gg8bu2J65sGI  # Set via environment variable or replace
-    cx: 23fcfdcfff95e4352                  # Custom Search Engine ID
-    enabled: true                                   # Enable Google Image Search fallback
+    api-key: ${GOOGLE_API_KEY}  # Set via environment variable
+    cx: ${GOOGLE_SEARCH_CX}     # Custom Search Engine ID
+    enabled: true               # Enable Google Image Search fallback
 
 logging:
   level:
